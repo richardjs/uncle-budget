@@ -1,0 +1,41 @@
+{% extends "unclebudget/base.html" %}
+
+{% block body %}
+
+<div class="page-header">
+	<h1>{{budget.name}}</h1>
+</div>
+
+<table class="budget-list table-striped" style="width: 100%">
+	<caption>Income</caption>
+	<thead>
+		<th>Name</th>
+		<th>Amount</th>
+	</thead>
+	<tbody>
+	{% for item in budget.income %}
+		<tr>
+			<td>{{item.name}}</td>
+			<td>${{item.total}}</td>
+		</tr>
+	{% endfor%}
+	</tbody>
+</table>
+
+<table class="budget-list table-striped" style="width: 100%">
+	<caption>Expenses</caption>
+	<thead>
+		<th>Name</th>
+		<th>Amount</th>
+	</thead>
+	<tbody>
+	{% for item in budget.expenses %}
+		<tr>
+			<td>{{item.name}}</td>
+			<td>${{item.total}}</td>
+		</tr>
+	{% endfor%}
+	</tbody>
+</table>
+
+{% endblock %}
