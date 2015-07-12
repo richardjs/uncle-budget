@@ -1,0 +1,27 @@
+{% extends "unclebudget/base.html" %}
+
+{% block body %}
+
+<div class="page-header">
+	<h1>Budget List</h1>
+</div>
+
+<table class="budget-list table-striped" style="width: 100%">
+	<caption>Open budgets</caption>
+	<thead>
+		<th>Name</th>
+		<th>Balance</th>
+		<th>Last modified</th>
+	</thead>
+	<tbody>
+	{% for budget in budgets %}
+		<tr>
+			<td class="budget-list-name"><a href="/budget/{{budget.id}}">{{budget.name}}</a></td>
+			<td class="budget-list-balance">${{budget.balance|floatformat:2}}</td>
+			<td class="budget-list-last-modified">{{budget.last_modified}}</td>
+		</tr>
+	{% endfor%}
+	</tbody>
+</table>
+
+{% endblock %}

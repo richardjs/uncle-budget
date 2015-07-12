@@ -1,0 +1,21 @@
+html, body{
+	height: 100%;
+}
+
+body{
+	background: #8a7;
+}
+
+.container{
+	background: white;
+	height: 100%
+}
+
+.budget-list{
+	font-size: 125%;
+}
+
+.budget-list td{
+	padding: 10px;
+	width: 33%;
+}
