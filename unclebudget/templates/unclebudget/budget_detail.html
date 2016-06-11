@@ -6,8 +6,10 @@
 	<h1>{{budget.name}}</h1>
 </div>
 
+<p class="lead">Surplus: ${{budget.surplus}}</p>
+
 <table class="budget-list table-striped" style="width: 100%">
-	<caption>Income</caption>
+	<caption>Income <small><a href="#">add income</a></small></caption>
 	<thead>
 		<th>Name</th>
 		<th>Amount</th>
@@ -23,18 +25,38 @@
 </table>
 
 <table class="budget-list table-striped" style="width: 100%">
-	<caption>Expenses</caption>
+	<caption>Expenses <small><a href="#">add expense</a></small></caption>
 	<thead>
 		<th>Name</th>
-		<th>Amount</th>
+		<th>Budgeted</th>
+		<th>Spent</th>
+		<th>Remaining</th>
 	</thead>
 	<tbody>
 	{% for item in budget.expenses %}
 		<tr>
-			<td>{{item.name}}</td>
+			<td>
+				{%if not item.singleton %}
+					<a href="{% url 'item_detail' item.id %}">{{item.name}}</a>
+				{% else %}
+					{{item.name}}
+				{% endif %}
+			</td>
+			<td>${{item.budgeted}}</td>
 			<td>${{item.total}}</td>
+			<td>
+				{% if not item.singleton %}
+				${{item.remaining}}
+				{% endif %}
+			</td>
 		</tr>
 	{% endfor%}
+	<tr style="font-weight: bold">
+		<td>Total</td>
+		<td>${{budget.expenses_budgeted}}</td>
+		<td>${{budget.expenses_total}}</td>
+		<td>${{budget.expenses_remaining}}</td>
+	</tr>
 	</tbody>
 </table>
 

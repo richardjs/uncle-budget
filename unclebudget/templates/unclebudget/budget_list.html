@@ -16,7 +16,7 @@
 	<tbody>
 	{% for budget in budgets %}
 		<tr>
-			<td class="budget-list-name"><a href="/budget/{{budget.id}}">{{budget.name}}</a></td>
+			<td class="budget-list-name"><a href="{% url 'budget_detail' budget.id %}">{{budget.name}}</a></td>
 			<td class="budget-list-balance">${{budget.balance|floatformat:2}}</td>
 			<td class="budget-list-last-modified">{{budget.last_modified}}</td>
 		</tr>

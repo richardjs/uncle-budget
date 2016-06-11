@@ -1,0 +1,64 @@
+{% extends "unclebudget/base.html" %}
+
+{% block body %}
+
+<div class="page-header">
+	<h1>{{item}}</h1>
+</div>
+
+<table class="table">
+	<caption>Summary</caption>
+	<tr>
+		<td>Budgeted:</td>
+		<td>${{item.budgeted}}</td>
+	</tr>
+	<tr>
+		<td>Spent:</td>
+		<td>${{item.total}}</td>
+	</tr>
+	<tr class="active">
+		<td>Remaining:</td>
+		<td>${{item.remaining}}</td>
+	</tr>
+</table>
+
+<form action="{% url 'transaction_create' %}" method="post" class="form-inline">
+	{% csrf_token %}
+	<input type="hidden" name="itemID" value="{{item.id}}">
+	<div class="form-group">
+		<div class="input-group">
+			<div class="input-group-addon">$</div>
+		<input name="amount" type="number" required autofocus step=".01" placeholder="0.00" class="form-control">
+		</div>
+	</div>
+	<div class="form-group">
+		<input name="comment" type="text" required placeholder="Comment" class="form-control">
+	</div>
+	<div class="form-group">
+		<input type="submit" value="Add transaction" class="form-control btn-primary">
+	</div>
+		
+</form>
+
+<table class="table budget-list table-striped">
+	<caption>Transactions</caption>
+	<thead>
+		<th>Amount</th>
+		<th>Comment</th>
+	</thead>
+	<tbody>
+	{% for transaction in item.transaction_set.all %}
+		<tr>
+			<td>${{transaction.amount}}</td>
+			<td>{{transaction.comment}}</td>
+			<td><form action="{% url 'transaction_delete' %}" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="transactionID" value="{{transaction.id}}">
+				<button href="#" class="btn-link small">delete</button>
+			</form></td>
+		</tr>
+	{% endfor%}
+	</tbody>
+</table>
+
+{% endblock %}
