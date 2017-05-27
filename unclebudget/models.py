@@ -5,6 +5,7 @@ class Budget(models.Model):
 	name = models.CharField(max_length=200)
 	last_modified = models.DateTimeField(auto_now=True)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	template = models.BooleanField(default=False)
 
 	@property
 	def surplus(self):
@@ -50,6 +51,22 @@ class Budget(models.Model):
 
 	def expenses_remaining(self):
 		return self.expenses_budgeted - self.expenses_total
+	
+	def copy(self):
+		copy = Budget.objects.get(id=self.id)
+		copy.pk = None
+		copy.name = 'Copy of ' + copy.name
+		copy.save()
+		for item in self.item_set.all():
+			transactions = item.transaction_set.all()
+			item.pk = None
+			item.budget = copy
+			item.save()
+			for transaction in transactions:
+				transaction.pk = None
+				transaction.item = item
+				transaction.save()
+		return copy
 
 	def __str__(self):
 		return self.name
@@ -89,7 +106,6 @@ class Item(models.Model):
 	
 class Transaction(models.Model):
 	item = models.ForeignKey('Item', on_delete=models.CASCADE)
-
 	amount = models.DecimalField(max_digits=9, decimal_places=2)
 	comment = models.CharField(max_length=200)
 
