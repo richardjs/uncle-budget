@@ -5,11 +5,29 @@
 	<head>
 		<title>Uncle Budget</title>
 		<link rel="stylesheet" href='{% static "unclebudget/css/bootstrap.css" %}'>
-		<link rel="stylesheet" href='{% static "unclebudget/css/bootstrap-theme.css" %}'>
+		<!--<link rel="stylesheet" href='{% static "unclebudget/css/bootstrap-theme.css" %}'>-->
 		<link rel="stylesheet" href='{% static "unclebudget/css/unclebudget-theme.css" %}'>
 	</head>
 	<body>
 		<div class="container">
+			<nav class="navbar navbar-default" style="margin-top: 5px">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<a class="navbar-brand" href="{% url 'budget_list' %}">Uncle Budget</a>
+					</div>
+					<ul class="nav navbar-nav">
+						<li><a href="{% url 'budget_list' %}">Home</a></li>
+						<li><a href="{% url 'budget_list' %}">All Budgets</a></li>
+						<li><a href="{% url 'budget_create' %}">Create Budget</a></li>
+						<li><a href="#">Templates</a></li>
+						<li><a href="#">Settings</a></li>
+					</ul>
+					<p class="navbar-text navbar-right" style="padding-right: 15px">
+						{{ user.username }}
+						<a href="{% url 'logout' %}">logout</a>
+					</p>
+				</div>
+			</nav>
 			{% block body %}{% endblock %}
 		</div>
 	</body>

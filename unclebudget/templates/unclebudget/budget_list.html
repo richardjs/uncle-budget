@@ -2,12 +2,18 @@
 
 {% block body %}
 
+<!--
 <div class="page-header">
 	<h1>Budget List</h1>
 </div>
+-->
+
+<ol class="breadcrumb">
+	<li class="active">Home</li>
+</ol>
 
 <table class="budget-list padded-list table-striped" style="width: 100%">
-	<caption>Open budgets <small><a href="{% url 'budget_create' %}">create budget</a></small></caption>
+	<caption>Open budgets<!--<small><a href="{% url 'budget_create' %}">create budget</a></small>--></caption>
 	<thead>
 		<th>Name</th>
 		<th>Balance</th>

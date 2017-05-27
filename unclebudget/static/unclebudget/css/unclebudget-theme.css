@@ -11,6 +11,15 @@ body{
 	/*height: 100%*/
 }
 
+.navbar-default{
+	background-color: white;
+}
+
+.navbar-default .navbar-brand{
+	color: green;
+	/*background: green;*/
+}
+
 .budget-list{
 	/*font-size: 125%;*/
 }
@@ -22,3 +31,4 @@ body{
 .padded-list td{
 	padding: 10px;
 }
+

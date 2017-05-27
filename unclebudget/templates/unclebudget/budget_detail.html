@@ -2,11 +2,20 @@
 
 {% block body %}
 
+<!--
 <div class="page-header">
 	<h1>{{budget.name}} <small><a href="{% url 'budget_list' %}">budget list</a></small></h1>
 </div>
+-->
 
-<p class="lead">Surplus: ${{budget.surplus}}</p>
+<ol class="breadcrumb">
+	<li><a href="{% url 'budget_list' %}">Budgets</a></li>
+	<li class="active">{{ budget.name }}</li>
+</ol>
+
+{% if budget.surplus %}
+	<p class="lead">Surplus: ${{budget.surplus}}</p>
+{% endif %}
 
 <hr>
 
@@ -28,8 +37,9 @@
 			</td>
 			<td>${{item.total}}</td>
 			<td>
-				<a href="{% url 'income_update' budget.id item.id %}">edit</a>
-				<form action="{% url 'item_delete' %}" method="post" style="display: inline">
+				<a href="{% url 'income_update' budget.id item.id %}"><button class="btn-link small">edit</button></a>
+				<form action="{% url 'item_delete' %}" method="post" style="display: inline"
+					onsubmit="javascript:return confirm('Are you sure you want to delete {{ item.name }}?');">
 					{% csrf_token %}
 					<input type="hidden" name="itemID" value="{{ item.id }}">
 					<button href="#" class="btn-link small">delete</button>
@@ -62,19 +72,20 @@
 				{% elif item.transfer_to %}
 					To <a href="{% url 'budget_detail' item.transfer_to.id %}">{{ item.transfer_to.name }}</a>
 				{% else %}
-					{{item.name}}
+					{{ item.name }}
 				{% endif %}
 			</td>
-			<td>${{item.budgeted}}</td>
-			<td>${{item.total}}</td>
+			<td>${{ item.budgeted }}</td>
+			<td>${{ item.total }}</td>
 			<td>
 				{% if not item.singleton %}
-				${{item.remaining}}
+					${{ item.remaining }}
 				{% endif %}
 			</td>
 			<td>
-				<a href="{% url 'expense_update' budget.id item.id %}">edit</a>
-				<form action="{% url 'item_delete' %}" method="post" style="display: inline">
+				<a href="{% url 'expense_update' budget.id item.id %}"><button class="btn-link small">edit</button></a>
+				<form action="{% url 'item_delete' %}" method="post" style="display: inline"
+					onsubmit="javascript:return confirm('Are you sure you want to delete {{ item.name }}?');">
 					{% csrf_token %}
 					<input type="hidden" name="itemID" value="{{ item.id }}">
 					<button href="#" class="btn-link small">delete</button>
