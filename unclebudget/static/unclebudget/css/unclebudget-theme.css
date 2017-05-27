@@ -1,21 +1,24 @@
 html, body{
-	height: 100%;
+	/*height: 100%;*/
 }
 
 body{
-	background: #8a7;
+	/*background: #8a7;*/
 }
 
 .container{
-	background: white;
-	height: 100%
+	/*background: white;*/
+	/*height: 100%*/
 }
 
 .budget-list{
-	font-size: 125%;
+	/*font-size: 125%;*/
 }
 
 .budget-list td{
-	padding: 10px;
 	width: 33%;
+}
+
+.padded-list td{
+	padding: 10px;
 }

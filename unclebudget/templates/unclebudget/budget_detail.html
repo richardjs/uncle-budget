@@ -3,13 +3,15 @@
 {% block body %}
 
 <div class="page-header">
-	<h1>{{budget.name}}</h1>
+	<h1>{{budget.name}} <small><a href="{% url 'budget_list' %}">budget list</a></small></h1>
 </div>
 
 <p class="lead">Surplus: ${{budget.surplus}}</p>
 
-<table class="budget-list table-striped" style="width: 100%">
-	<caption>Income <small><a href="#">add income</a></small></caption>
+<hr>
+
+<table class="padded-list table-striped" style="width: 100%">
+	<caption>Income <small><a href="{% url 'income_create' budget.id %}">add income</a></small></caption>
 	<thead>
 		<th>Name</th>
 		<th>Amount</th>
@@ -17,15 +19,34 @@
 	<tbody>
 	{% for item in budget.income %}
 		<tr>
-			<td>{{item.name}}</td>
+			<td>
+				{% if not item.transfer_to %}
+					{{ item.name }}
+				{% else %}
+					From <a href="{% url 'budget_detail' item.budget.id %}">{{ item.budget.name }}</a>
+				{% endif %}
+			</td>
 			<td>${{item.total}}</td>
+			<td>
+				<a href="{% url 'income_update' budget.id item.id %}">edit</a>
+				<form action="{% url 'item_delete' %}" method="post" style="display: inline">
+					{% csrf_token %}
+					<input type="hidden" name="itemID" value="{{ item.id }}">
+					<button href="#" class="btn-link small">delete</button>
+				</form>
+			</td>
 		</tr>
 	{% endfor%}
+	{% if not budget.income %}
+		<tr><td>&nbsp;</td><td></td></tr>
+	{% endif %}
 	</tbody>
 </table>
 
-<table class="budget-list table-striped" style="width: 100%">
-	<caption>Expenses <small><a href="#">add expense</a></small></caption>
+<hr>
+
+<table class="padded-list table-striped" style="width: 100%">
+	<caption>Expenses <small><a href="{% url 'expense_create' budget.id%}">add expense</a></small></caption>
 	<thead>
 		<th>Name</th>
 		<th>Budgeted</th>
@@ -36,8 +57,10 @@
 	{% for item in budget.expenses %}
 		<tr>
 			<td>
-				{%if not item.singleton %}
+				{% if not item.singleton %}
 					<a href="{% url 'item_detail' item.id %}">{{item.name}}</a>
+				{% elif item.transfer_to %}
+					To <a href="{% url 'budget_detail' item.transfer_to.id %}">{{ item.transfer_to.name }}</a>
 				{% else %}
 					{{item.name}}
 				{% endif %}
@@ -49,13 +72,25 @@
 				${{item.remaining}}
 				{% endif %}
 			</td>
+			<td>
+				<a href="{% url 'expense_update' budget.id item.id %}">edit</a>
+				<form action="{% url 'item_delete' %}" method="post" style="display: inline">
+					{% csrf_token %}
+					<input type="hidden" name="itemID" value="{{ item.id }}">
+					<button href="#" class="btn-link small">delete</button>
+				</form>
+			</td>
 		</tr>
 	{% endfor%}
+	{% if not budget.expenses %}
+		<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr>
+	{% endif %}
 	<tr style="font-weight: bold">
 		<td>Total</td>
 		<td>${{budget.expenses_budgeted}}</td>
 		<td>${{budget.expenses_total}}</td>
 		<td>${{budget.expenses_remaining}}</td>
+		<td>&nbsp;</td>
 	</tr>
 	</tbody>
 </table>

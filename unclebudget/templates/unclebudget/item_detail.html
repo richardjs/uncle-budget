@@ -3,7 +3,7 @@
 {% block body %}
 
 <div class="page-header">
-	<h1>{{item}}</h1>
+	<h1>{{item.name}} - <a href="{% url 'budget_detail' item.budget.id %}">{{item.budget.name}}</a></h1>
 </div>
 
 <table class="table">
@@ -37,7 +37,6 @@
 	<div class="form-group">
 		<input type="submit" value="Add transaction" class="form-control btn-primary">
 	</div>
-		
 </form>
 
 <table class="table budget-list table-striped">
@@ -49,15 +48,15 @@
 	<tbody>
 	{% for transaction in item.transaction_set.all %}
 		<tr>
-			<td>${{transaction.amount}}</td>
-			<td>{{transaction.comment}}</td>
+			<td>${{ transaction.amount }}</td>
+			<td>{{ transaction.comment }}</td>
 			<td><form action="{% url 'transaction_delete' %}" method="post">
 				{% csrf_token %}
-				<input type="hidden" name="transactionID" value="{{transaction.id}}">
+				<input type="hidden" name="transactionID" value="{{ transaction.id }}">
 				<button href="#" class="btn-link small">delete</button>
 			</form></td>
 		</tr>
-	{% endfor%}
+	{% endfor %}
 	</tbody>
 </table>
 

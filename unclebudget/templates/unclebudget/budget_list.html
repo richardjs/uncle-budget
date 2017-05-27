@@ -6,15 +6,15 @@
 	<h1>Budget List</h1>
 </div>
 
-<table class="budget-list table-striped" style="width: 100%">
-	<caption>Open budgets</caption>
+<table class="budget-list padded-list table-striped" style="width: 100%">
+	<caption>Open budgets <small><a href="{% url 'budget_create' %}">create budget</a></small></caption>
 	<thead>
 		<th>Name</th>
 		<th>Balance</th>
 		<th>Last modified</th>
 	</thead>
 	<tbody>
-	{% for budget in budgets %}
+	{% for budget in budget_list %}
 		<tr>
 			<td class="budget-list-name"><a href="{% url 'budget_detail' budget.id %}">{{budget.name}}</a></td>
 			<td class="budget-list-balance">${{budget.balance|floatformat:2}}</td>

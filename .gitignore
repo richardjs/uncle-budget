@@ -2,4 +2,5 @@ env/
 __pycache__/
 *.swp
 *.sqlite3
+*.pyc
 .DS_Store
