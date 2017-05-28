@@ -7,6 +7,19 @@ from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from unclebudget.models import Budget, Item, Transaction
 
+class ActiveBudgetList(LoginRequiredMixin, ListView):
+	def get_queryset(self):
+		return Budget.objects.filter(user=self.request.user, template=False).order_by('-last_modified')
+
+class AllBudgetList(LoginRequiredMixin, ListView):
+	def get_context_data(self):
+		context = super().get_context_data()
+		context['all'] = True
+		return context 
+
+	def get_queryset(self):
+		return Budget.objects.filter(user=self.request.user, template=False).order_by('-last_modified')
+
 class BudgetCreate(LoginRequiredMixin, CreateView):
 	model = Budget
 	fields = ['name']
@@ -16,6 +29,21 @@ class BudgetCreate(LoginRequiredMixin, CreateView):
 		form.instance.user = self.request.user
 		return super().form_valid(form) 
 
+class BudgetUpdate(LoginRequiredMixin, UpdateView):
+	model = Budget
+	fields = ['name']
+	success_url = reverse_lazy('budget_list')
+
+	def form_valid(self, form):
+		form.instance.user = self.request.user
+		return super().form_valid(form) 
+
+	def get_object(self):
+		budget = super().get_object()
+		if budget.user != self.request.user:
+			raise PermissionDenied
+		return budget
+
 class BudgetDetail(LoginRequiredMixin, DetailView):
 	model = Budget
 
@@ -24,12 +52,6 @@ class BudgetDetail(LoginRequiredMixin, DetailView):
 		if budget.user != self.request.user:
 			raise PermissionDenied
 		return budget
-
-class BudgetList(LoginRequiredMixin, ListView):
-	ordering = '-last_modified'
-
-	def get_queryset(self):
-		return Budget.objects.filter(user=self.request.user)
 
 class ExpenseCreate(LoginRequiredMixin, CreateView):
 	model = Item
@@ -129,6 +151,22 @@ class ItemDetail(LoginRequiredMixin, DetailView):
 		if item.budget.user != self.request.user:
 			raise PermissionDenied
 		return item
+
+def budget_copy(request):
+	budget = Budget.objects.get(id=request.POST['budgetID'])
+	if budget.user != request.user:
+		raise PermissionDenied
+
+	budget.copy()
+	return redirect('budget_list')
+
+def budget_delete(request):
+	budget = Budget.objects.get(id=request.POST['budgetID'])
+	if budget.user != request.user:
+		raise PermissionDenied
+
+	budget.delete()
+	return redirect('budget_list')
 
 def item_delete(request):
 	item = Item.objects.get(id=request.POST['itemID'])

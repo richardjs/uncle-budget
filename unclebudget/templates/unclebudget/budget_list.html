@@ -13,7 +13,7 @@
 </ol>
 
 <table class="budget-list padded-list table-striped" style="width: 100%">
-	<caption>Open budgets<!--<small><a href="{% url 'budget_create' %}">create budget</a></small>--></caption>
+	<caption>{% if all %}All{% else %}Active{% endif %} budgets <small><a href="{% url 'budget_create' %}">create budget</a></small></caption>
 	<thead>
 		<th>Name</th>
 		<th>Balance</th>
@@ -21,11 +21,27 @@
 	</thead>
 	<tbody>
 	{% for budget in budget_list %}
+	{% if all or budget.income_budgeted == 0 or budget.balance != 0 %}
 		<tr>
-			<td class="budget-list-name"><a href="{% url 'budget_detail' budget.id %}">{{budget.name}}</a></td>
-			<td class="budget-list-balance">${{budget.balance|floatformat:2}}</td>
-			<td class="budget-list-last-modified">{{budget.last_modified}}</td>
+			<td class="budget-list-name"><a href="{% url 'budget_detail' budget.id %}">{{ budget.name }}</a></td>
+			<td class="budget-list-balance">${{ budget.balance|floatformat:2 }}</td>
+			<td class="budget-list-last-modified">{{ budget.last_modified|date:'M d, Y' }}</td>
+			<td>
+				<a href="{% url 'budget_update' budget.id %}"><button class="btn-link small">edit</button></a>
+				<form action="{% url 'budget_copy' %}" method="post" style="display: inline">
+					{% csrf_token %}
+					<input type="hidden" name="budgetID" value="{{ budget.id }}">
+					<button href="#" class="btn-link small">copy</button>
+				</form>
+				<form action="{% url 'budget_delete' %}" method="post" style="display: inline"
+					onsubmit="javascript:return confirm('Are you sure you want to delete {{ budget.name }}?');">
+					{% csrf_token %}
+					<input type="hidden" name="budgetID" value="{{ budget.id }}">
+					<button href="#" class="btn-link small">delete</button>
+				</form>
+			</td>
 		</tr>
+	{% endif %}
 	{% endfor%}
 	</tbody>
 </table>

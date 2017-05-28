@@ -85,12 +85,17 @@ class Item(models.Model):
 	def remaining(self):
 		return self.budgeted - self.total
 	
+	def delete(self):
+		super().delete()
+		self.budget.save()
+
 	def save(self):
 		if self.income:
 			self.singleton = True
 		if self.transfer_to:
 			self.singleton = True
 		super().save()
+		self.budget.save()
 
 	@property
 	def total(self):
@@ -109,5 +114,13 @@ class Transaction(models.Model):
 	amount = models.DecimalField(max_digits=9, decimal_places=2)
 	comment = models.CharField(max_length=200)
 
+	def delete(self):
+		super().delete()
+		self.item.budget.save()
+
+	def save(self):
+		super().save()
+		self.item.budget.save()
+	
 	def __str__(self):
 		return '%s - $%.2f' % (self.comment, self.amount)

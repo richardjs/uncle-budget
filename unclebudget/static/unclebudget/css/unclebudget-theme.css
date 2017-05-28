@@ -25,7 +25,7 @@ body{
 }
 
 .budget-list td{
-	width: 33%;
+	/*width: 33%;*/
 }
 
 .padded-list td{
