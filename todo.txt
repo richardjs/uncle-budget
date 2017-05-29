@@ -1,0 +1,11 @@
+registration
+landing page
+templates
+singleton paying
+actual update forms
+settings page
+	email/username change
+	password change
+	export
+	what else?
+payment integration (eventually)
