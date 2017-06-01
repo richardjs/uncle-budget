@@ -27,7 +27,7 @@ class Budget(models.Model):
 	
 	@property
 	def income(self):
-		return self.item_set.filter(income=True).union(self.transfer_set.all()).order_by('-budgeted')
+		return self.item_set.filter(income=True).union(self.transfer_set.filter(budget__template=False)).order_by('-budgeted')
 
 	@property
 	def income_budgeted(self):

@@ -20,13 +20,42 @@ class AllBudgetList(LoginRequiredMixin, ListView):
 	def get_queryset(self):
 		return Budget.objects.filter(user=self.request.user, template=False).order_by('-last_modified')
 
+class TemplateList(LoginRequiredMixin, ListView):
+	template_name = 'unclebudget/template_list.html'
+
+	def get_queryset(self):
+		return Budget.objects.filter(user=self.request.user, template=True).order_by('-last_modified')
+
 class BudgetCreate(LoginRequiredMixin, CreateView):
 	model = Budget
 	fields = ['name']
 	success_url = reverse_lazy('budget_list')
 
+	def get_context_data(self):
+		context = super().get_context_data()
+		context['budgets'] = Budget.objects.filter(user=self.request.user, template=False)
+		context['templates'] = Budget.objects.filter(user=self.request.user, template=True)
+		return context
+
 	def form_valid(self, form):
+		name = form.instance.name
+		template = form.instance.template
 		form.instance.user = self.request.user
+		copy_id = None
+		if self.request.POST['copy'] == 'template':
+			copy_id = int(self.request.POST['copy_from_template'])
+		if self.request.POST['copy'] == 'budget':
+			copy_id = int(self.request.POST['copy_from_budget'])
+		form.instance = Budget.objects.get(id=copy_id).copy()
+		form.instance.name = name
+		form.instance.template = template
+		return super().form_valid(form) 
+
+class TemplateCreate(BudgetCreate):
+	success_url = reverse_lazy('template_list')
+
+	def form_valid(self, form):
+		form.instance.template = True
 		return super().form_valid(form) 
 
 class BudgetUpdate(LoginRequiredMixin, UpdateView):
@@ -62,11 +91,21 @@ class ExpenseCreate(LoginRequiredMixin, CreateView):
 		if budget.user != self.request.user:
 			raise PermissionDenied
 		form.instance.budget = budget
+		if self.request.POST['type'] == 'single':
+			form.instance.singleton = True
+		elif self.request.POST['type'] == 'transfer':
+			transfer_id = int(self.request.POST['transfer_to'])
+			if transfer_id != budget.id:
+				transfer_to = Budget.objects.get(id=transfer_id)
+				form.instance.transfer_to = transfer_to
 		return super().form_valid(form) 
 	
-	def get_context_data(self):
-		context = super().get_context_data()
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
 		context['title'] = 'Add Expense Item'
+		context['budget'] = Budget.objects.get(id=self.kwargs['budget_pk'])
+		context['budgets'] = Budget.objects.filter(user=self.request.user, template=False)
+		context['expense_create'] = True
 		return context
 
 	def get_success_url(self):
@@ -83,9 +122,10 @@ class ExpenseUpdate(LoginRequiredMixin, UpdateView):
 		form.instance.budget = budget
 		return super().form_valid(form) 
 	
-	def get_context_data(self):
-		context = super().get_context_data()
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
 		context['title'] = 'Add Expense Item'
+		context['budget'] = Budget.objects.get(id=self.kwargs['budget_pk'])
 		return context
 
 	def get_object(self):
@@ -109,9 +149,10 @@ class IncomeCreate(LoginRequiredMixin, CreateView):
 		form.instance.income = True
 		return super().form_valid(form) 
 
-	def get_context_data(self):
-		context = super().get_context_data()
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
 		context['title'] = 'Add Income Item'
+		context['budget'] = Budget.objects.get(id=self.kwargs['budget_pk'])
 		return context
 
 	def get_success_url(self):
@@ -129,9 +170,10 @@ class IncomeUpdate(LoginRequiredMixin, UpdateView):
 		form.instance.income = True
 		return super().form_valid(form) 
 
-	def get_context_data(self):
-		context = super().get_context_data()
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
 		context['title'] = 'Add Income Item'
+		context['budget'] = Budget.objects.get(id=self.kwargs['budget_pk'])
 		return context
 
 	def get_object(self):

@@ -69,10 +69,11 @@
 			<td>
 				{% if not item.singleton %}
 					<a href="{% url 'item_detail' item.id %}">{{item.name}}</a>
-				{% elif item.transfer_to %}
-					To <a href="{% url 'budget_detail' item.transfer_to.id %}">{{ item.transfer_to.name }}</a>
 				{% else %}
 					{{ item.name }}
+					{% if item.transfer_to %}
+						(to <a href="{% url 'budget_detail' item.transfer_to.id %}">{{ item.transfer_to.name }}</a>)
+					{% endif %}
 				{% endif %}
 			</td>
 			<td>${{ item.budgeted }}</td>
