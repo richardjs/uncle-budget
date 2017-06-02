@@ -29,10 +29,9 @@
 	{% for item in budget.income %}
 		<tr>
 			<td>
-				{% if not item.transfer_to %}
-					{{ item.name }}
-				{% else %}
-					From <a href="{% url 'budget_detail' item.budget.id %}">{{ item.budget.name }}</a>
+				{{ item.name }}
+				{% if item.transfer_to %}
+					(from <a href="{% url 'budget_detail' item.budget.id %}">{{ item.budget.name }}</a>)
 				{% endif %}
 			</td>
 			<td>${{item.total}}</td>
@@ -77,13 +76,25 @@
 				{% endif %}
 			</td>
 			<td>${{ item.budgeted }}</td>
-			<td>${{ item.total }}</td>
+			<td>
+				${{ item.total }}
+				{% if item.singleton and not item.transfer_to and not item.total %}
+					<form action="{% url 'singleton_pay' %}" method="post" style="display: inline">
+						{% csrf_token %}
+						<input type="hidden" name="itemID" value="{{ item.id }}">
+						<button href="#" class="btn-link small">pay</button>
+					</form>
+				{% endif %}
+			</td>
 			<td>
 				{% if not item.singleton %}
 					${{ item.remaining }}
 				{% endif %}
 			</td>
 			<td>
+				<a href="{% url 'item_detail' item.id %}"
+						{% if item.singleton %}style="visibility: hidden"{% endif %}>
+					<button class="btn-link small">add transactions</button></a>
 				<a href="{% url 'expense_update' budget.id item.id %}"><button class="btn-link small">edit</button></a>
 				<form action="{% url 'item_delete' %}" method="post" style="display: inline"
 					onsubmit="javascript:return confirm('Are you sure you want to delete {{ item.name }}?');">

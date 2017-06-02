@@ -27,4 +27,5 @@ urlpatterns = [
 	url(r'^item_delete$', unclebudget.views.item_delete, name='item_delete'),
 	url(r'^transaction_create$', unclebudget.views.transaction_create, name='transaction_create'),
 	url(r'^transaction_delete$', unclebudget.views.transaction_delete, name='transaction_delete'),
+	url(r'^singleton_pay$', unclebudget.views.singleton_pay, name='singleton_pay'),
 ]

@@ -99,7 +99,7 @@ class Item(models.Model):
 
 	@property
 	def total(self):
-		if self.singleton or self.income:
+		if self.transfer_to or self.income:
 			return self.budgeted
 		total = 0
 		for transaction in self.transaction_set.all():

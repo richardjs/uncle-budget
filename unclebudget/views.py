@@ -94,7 +94,7 @@ class ExpenseCreate(LoginRequiredMixin, CreateView):
 		if self.request.POST['type'] == 'single':
 			form.instance.singleton = True
 		elif self.request.POST['type'] == 'transfer':
-			transfer_id = int(self.request.POST['transfer_to'])
+			transfer_id = int(self.request.POST['transfer_id'])
 			if transfer_id != budget.id:
 				transfer_to = Budget.objects.get(id=transfer_id)
 				form.instance.transfer_to = transfer_to
@@ -239,3 +239,15 @@ def transaction_delete(request):
 	itemID = transaction.item.id
 	transaction.delete()
 	return redirect('item_detail', itemID)
+
+def singleton_pay(request):
+	item = Item.objects.get(id=request.POST['itemID'])
+	if item.budget.user != request.user:
+		raise PermissionDenied
+	assert item.singleton
+
+	if len(item.transaction_set.all()) == 0:
+		transaction = Transaction(item=item, amount=item.budgeted, comment=item.name)
+		transaction.save()
+
+	return redirect('budget_detail', item.budget.id)

@@ -65,7 +65,7 @@ function showBudgetList(){
 			</label>
 		</div>
 		<p id="budget_list" style="display: none">
-			<label>Transfer to</label><select name="transfer_to" class="form-control" >
+			<label>Transfer to</label><select name="transfer_id" class="form-control" >
 			{% for b in budgets %}
 				{% if budget.id != b.id %}
 					<option value="{{ b.id }}">{{ b.name }}</option>
