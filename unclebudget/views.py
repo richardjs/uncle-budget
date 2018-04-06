@@ -44,9 +44,10 @@ class BudgetCreate(LoginRequiredMixin, CreateView):
 		copy_id = None
 		if self.request.POST['copy'] == 'template':
 			copy_id = int(self.request.POST['copy_from_template'])
+			form.instance = Budget.objects.get(id=copy_id).copy()
 		if self.request.POST['copy'] == 'budget':
 			copy_id = int(self.request.POST['copy_from_budget'])
-		form.instance = Budget.objects.get(id=copy_id).copy()
+			form.instance = Budget.objects.get(id=copy_id).copy()
 		form.instance.name = name
 		form.instance.template = template
 		return super().form_valid(form) 
